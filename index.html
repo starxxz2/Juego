@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego del Amor ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff4d6d, #ff8fab);
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.card {
+  background: rgba(255,255,255,0.15);
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 440px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+#corazones {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+#pregunta {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background: #ff4d6d;
+  color: white;
+}
+
+button:hover { background: #e63e5c; }
+
+.correcta {
+  background: #2ecc71 !important;
+}
+
+.incorrecta {
+  background: #e74c3c !important;
+}
+
+#mensaje {
+  margin-top: 15px;
+  min-height: 90px;
+}
+
+.correcto-texto {
+  font-size: 26px;
+  animation: pop3d 1s ease;
+  text-shadow: 0 5px 0 #c9184a;
+}
+
+.triste {
+  font-size: 22px;
+}
+
+@keyframes pop3d {
+  0% { transform: scale(0.4) rotateX(90deg); opacity: 0; }
+  100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div id="corazones">❤️ Corazones: 0</div>
+  <div id="pregunta"></div>
+  <div id="opciones"></div>
+  <div id="mensaje"></div>
+</div>
+
+<script>
+// ================= PREGUNTAS =================
+const preguntas = [
+  { texto: "¿Cuántos años tengo?", opciones: ["14","13"], correcta: 0 },
+  { texto: "¿Cuántos hijos quiero tener contigo?", opciones: ["0","1","2","4"], correcta: 2 },
+  { texto: "¿Cuál es mi comida favorita?", opciones: ["Tacos","Pizza","Hamburguesa","Sushi","Espaguetis"], correcta: 0 },
+  {
+    texto: "¿Cómo se va a llamar nuestra primera hija?",
+    opciones: ["Ivette","Maria","Emely","Perenseja"],
+    correcta: 3
+  },
+  { texto: "¿Qué es lo mejor de ti?", opciones: ["Todo","Nada"], correcta: 0 },
+  { texto: "¿Quiero niña o niño?", opciones: ["Niña","Niño"], correcta: 0 },
+  { texto: "¿Cuándo nos hicimos novios?", opciones: ["10/10/2025","9/10/2025"], correcta: 0 }
+];
+
+// ================= BUCLE FINAL =================
+const preguntasFinales = [
+  "¿Me amas?",
+  "¿Estás segura de eso?",
+  "¿De verdad me amas?",
+  "¿Incluso cuando discutimos?",
+  "¿Para siempre?"
+];
+
+// ================= VARIABLES =================
+let actual = 0;
+let corazones = 0;
+let indiceFinal = 0;
+let modo = "normal"; // normal | bucle | ultima | beso | fin
+
+// ================= FUNCIONES NORMALES =================
+function cargarPregunta() {
+  if (actual >= preguntas.length) {
+    modo = "bucle";
+    cargarBucle();
+    return;
+  }
+
+  document.getElementById("pregunta").innerText = preguntas[actual].texto;
+  const cont = document.getElementById("opciones");
+  cont.innerHTML = "";
+  document.getElementById("mensaje").innerHTML = "";
+
+  preguntas[actual].opciones.forEach((op, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = op;
+    btn.onclick = () => responderNormal(i);
+    cont.appendChild(btn);
+  });
+}
+
+function responderNormal(opElegida) {
+  const botones = document.querySelectorAll("#opciones button");
+
+  botones.forEach((btn, i) => {
+    if (i === preguntas[actual].correcta) {
+      btn.classList.add("correcta");
+      btn.innerText += " ✅";
+    } else {
+      btn.classList.add("incorrecta");
+      btn.innerText += " ❌";
+    }
+    btn.disabled = true;
+  });
+
+  if (opElegida === preguntas[actual].correcta) {
+    corazones++;
+    document.getElementById("mensaje").innerHTML =
+      "<div class='correcto-texto'>BUENA ELECCIÓN AMOR 💖</div>";
+  } else {
+    document.getElementById("mensaje").innerHTML =
+      "<div class='triste'>Tu novio está decepcionado 😞</div>";
+  }
+
+  actualizarCorazones();
+  actual++;
+  setTimeout(cargarPregunta, 2200);
+}
+
+// ================= BUCLE FINAL =================
+function cargarBucle() {
+  document.getElementById("pregunta").innerText = preguntasFinales[indiceFinal];
+  const cont = document.getElementById("opciones");
+  cont.innerHTML = "";
+  document.getElementById("mensaje").innerHTML = "";
+
+  ["❤️ Sí", "❌ No"].forEach((op, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = op;
+    btn.onclick = () => responderBucle(i);
+    cont.appendChild(btn);
+  });
+}
+
+function responderBucle(opElegida) {
+  const botones = document.querySelectorAll("#opciones button");
+
+  botones.forEach((btn, i) => {
+    if (i === 0) {
+      btn.classList.add("correcta");
+      btn.innerText += " ✅";
+    } else {
+      btn.classList.add("incorrecta");
+      btn.innerText += " ❌";
+    }
+    btn.disabled = true;
+  });
+
+  if (opElegida === 0) {
+    document.getElementById("mensaje").innerHTML =
+      "<div class='correcto-texto'>Sabía que sí 💖</div>";
+    indiceFinal++;
+    if (indiceFinal < preguntasFinales.length) {
+      setTimeout(cargarBucle, 2200);
+    }
+  } else {
+    corazones = 0;
+    actualizarCorazones();
+    document.getElementById("mensaje").innerHTML =
+      "<div class='triste'>Eso dolió… 💔</div>";
+    setTimeout(cargarUltima, 2200);
+  }
+}
+
+// ================= ULTIMA Y BESO =================
+function cargarUltima() {
+  document.getElementById("pregunta").innerText =
+    "¿Amas a tu novio Yandel?";
+  document.getElementById("opciones").innerHTML = `
+    <button onclick="finalAmor(true)">❤️ Sí</button>
+    <button onclick="finalAmor(false)">❌ No</button>
+  `;
+  document.getElementById("mensaje").innerHTML = "";
+}
+
+function finalAmor(res) {
+  if (!res) {
+    document.getElementById("mensaje").innerHTML =
+      "<div class='triste'>Juego terminado 💔</div>";
+    return;
+  }
+
+  corazones = 100000000;
+  actualizarCorazones();
+  document.getElementById("mensaje").innerHTML =
+    "<div class='correcto-texto'>+100 MILLONES DE CORAZONES 💖✨</div>";
+  setTimeout(cargarBeso, 2200);
+}
+
+function cargarBeso() {
+  document.getElementById("pregunta").innerText =
+    "¿Cuándo nos vamos a besar?";
+  document.getElementById("opciones").innerHTML = `
+    <button onclick="beso('mañana')">Mañana</button>
+    <button onclick="beso('nunca')">Nunca</button>
+    <button onclick="beso('pasado')">Pasado mañana</button>
+  `;
+  document.getElementById("mensaje").innerHTML = "";
+}
+
+function beso(res) {
+  if (res === "mañana") {
+    corazones += 100000000;
+    actualizarCorazones();
+    document.getElementById("mensaje").innerHTML =
+      "<div class='correcto-texto'>OTROS 100 MILLONES ❤️🔥</div>";
+  } else {
+    document.getElementById("mensaje").innerHTML =
+      "<div class='triste'>Eso dolió un poquito 😞</div>";
+  }
+}
+
+// ================= UTIL =================
+function actualizarCorazones() {
+  document.getElementById("corazones").innerText =
+    "❤️ Corazones: " + corazones.toLocaleString();
+}
+
+// ================= INICIO =================
+cargarPregunta();
+</script>
+
+</body>
+</html>
